@@ -289,19 +289,18 @@ function reverseInteger(num) {
  */
 function isCreditCardNumber(ccn) {
   let sum = 0;
-  const arr = ccn.toString().split('');
-  const checkNum = +arr.pop();
-  sum = arr.reduceRight((a, b, index) => {
-    if (index % 2 === arr.length % 2) {
-      return +a + +b;
+  const digits = ccn.toString();
+  for (let i = 0; i < digits.length; i += 1) {
+    let cardNum = parseInt(digits[i], 10);
+    if ((digits.length - i) % 2 === 0) {
+      cardNum *= 2;
+      if (cardNum > 9) {
+        cardNum -= 9;
+      }
     }
-
-    return (+a + +(b * 2).toString()
-      .split('')
-      .reduce((acc, item) => +acc + +item)
-    );
-  }, 0);
-  return checkNum === (10 - (sum % 10)) % 10;
+    sum += cardNum;
+  }
+  return sum % 10 === 0;
 }
 
 /**
@@ -319,11 +318,9 @@ function isCreditCardNumber(ccn) {
  *   165536 (1+6+5+5+3+6 = 26,  2+6 = 8) => 8
  */
 function getDigitalRoot(num) {
-  const result = num;
-  while (result > 9) {
-    result.toString().split().reduce((a, b) => a + b);
-  }
-  return result;
+  const arr = num.toString().split('').map((el) => el * 1);
+  const newnum = arr.reduce((a, b) => a + b);
+  return newnum < 10 ? newnum : getDigitalRoot(newnum);
 }
 
 
@@ -374,7 +371,16 @@ function isBracketsBalanced(/* str */) {
  *    365, 10 => '365'
  */
 function toNaryString(num, n) {
-  return num.toString(n);
+  const array = [];
+  let digit = num;
+  while (digit >= n - 1) {
+    array.unshift((digit % n).toString());
+    digit = Math.floor(digit / n);
+  }
+  if (digit) {
+    array.unshift(digit);
+  }
+  return array.join('');
 }
 
 
